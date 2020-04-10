@@ -1,0 +1,52 @@
+# LDAP is case insensitive
+
+# Base DN
+dn: dc=demo
+dc: demo
+objectClass: dcObject
+objectClass: organization
+o: demo
+description: Demo Inc.
+
+# Root DN
+dn: cn=admin,dc=demo
+cn: admin
+objectClass: groupOfNames
+description: LDAP admin
+member: cn=null
+
+# user tree
+dn: dc=users,dc=demo
+dc: users
+objectClass: dcObject
+objectClass: organizationalUnit
+ou: users
+description: Account Users
+
+# User template
+#
+# dn: uid=ib-test,dc=users,dc=demo
+# cn: Iblis Lin
+# objectClass: account
+# objectClass: posixAccount
+# objectClass: shadowAccount
+# uid: ib-test
+# userPassword: ...
+# uidNumber: 10001
+# gidNumber: 10001
+# homeDirectory: /home/ib-test
+# loginShell: /bin/bash
+
+# ib-test/test
+dn: uid=ib-test,dc=users,dc=demo
+cn: Iblis Lin
+objectClass: account
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: ib-test
+userPassword: {SSHA512}TheB0GKFgoWDmA1a/6vZymizECThbge/UVfCLSfoiom/sVFnTd0mHZigoC0rqDD5BmuJtS64cf/83+ircrfXJ5F/5mwuwww9
+mail: iblis@demo.com
+uidNumber: 10001
+gidNumber: 10001
+homeDirectory: /home/ib-test
+loginShell: /bin/sh
