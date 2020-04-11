@@ -15,7 +15,8 @@ RUN echo 'SLAPD_SERVICES="ldap:/// ldapi:/// ldaps:///"' > /etc/default/slapd
 WORKDIR /opt/ldap
 
 COPY ./slapd.ldif .
-copy ./base.ldif .
+COPY ./base.ldif .
+COPY ./nis.ldif .
 COPY ./10-slapd.conf /etc/rsyslog.d/
 COPY ./start.sh /opt/start.sh
 

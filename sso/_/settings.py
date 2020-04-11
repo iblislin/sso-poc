@@ -25,7 +25,7 @@ SECRET_KEY = '2maj=p-_b^3$-gc^-=y)07m1-mie(+y-k6oe*lbz_8q*d!u-85'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -37,6 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'oauth2_provider',
+    'sso',
 ]
 
 MIDDLEWARE = [
@@ -44,6 +47,7 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'oauth2_provider.middleware.OAuth2TokenMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -118,3 +122,26 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+# Auth
+# https://docs.djangoproject.com/en/3.0/topics/auth/customizing/
+
+AUTHENTICATION_BACKENDS = [
+    'oauth2_provider.backends.OAuth2Backend',
+    'sso.ldap_auth.FreebsdLdapBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
+AUTH_USER_MODEL = 'sso.User'
+LOGIN_REDIRECT_URL = '/'
+
+
+# OAuth2 Provider
+# https://django-oauth-toolkit.readthedocs.io/en/latest/settings.html
+
+OAUTH2_PROVIDER = {
+    'SCOPES': {
+        'foo': 'Foo scope',
+        'bar': 'Bar scope',
+    },
+}
