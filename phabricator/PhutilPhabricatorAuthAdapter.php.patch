@@ -1,0 +1,75 @@
+--- /opt/bitnami/phabricator/src/applications/auth/adapter/PhutilPhabricatorAuthAdapter.php.orig	2020-04-11 06:36:19.651352843 +0000
++++ /opt/bitnami/phabricator/src/applications/auth/adapter/PhutilPhabricatorAuthAdapter.php	2020-04-11 08:41:03.060690557 +0000
+@@ -31,15 +31,15 @@
+   }
+ 
+   public function getAccountID() {
+-    return $this->getOAuthAccountData('phid');
++    return $this->getOAuthAccountData('id');
+   }
+ 
+   public function getAccountEmail() {
+-    return $this->getOAuthAccountData('primaryEmail');
++    return $this->getOAuthAccountData('email');
+   }
+ 
+   public function getAccountName() {
+-    return $this->getOAuthAccountData('userName');
++    return $this->getOAuthAccountData('username');
+   }
+ 
+   public function getAccountImageURI() {
+@@ -47,23 +47,23 @@
+   }
+ 
+   public function getAccountURI() {
+-    return $this->getOAuthAccountData('uri');
++    return $this->getOAuthAccountData('link');
+   }
+ 
+   public function getAccountRealName() {
+-    return $this->getOAuthAccountData('realName');
++    return $this->getOAuthAccountData('name');
+   }
+ 
+   protected function getAuthenticateBaseURI() {
+-    return $this->getPhabricatorURI('oauthserver/auth/');
++    return $this->getPhabricatorURI('o/authorize/');
+   }
+ 
+   protected function getTokenBaseURI() {
+-    return $this->getPhabricatorURI('oauthserver/token/');
++    return $this->getPhabricatorURI('o/token/');
+   }
+ 
+   public function getScope() {
+-    return '';
++    return 'foo';
+   }
+ 
+   public function getExtraAuthenticateParameters() {
+@@ -79,13 +79,19 @@
+   }
+ 
+   protected function loadOAuthAccountData() {
+-    $uri = id(new PhutilURI($this->getPhabricatorURI('api/user.whoami')))
+-      ->replaceQueryParam('access_token', $this->getAccessToken());
+-    list($body) = id(new HTTPSFuture($uri))->resolvex();
++    $uri = new PhutilURI($this->getPhabricatorURI('api/user'));
++
++    $future = new HTTPSFuture($uri);
++
++    $future->addHeader('User-Agent', __CLASS__);
++
++    $token_header = sprintf('Bearer %s', $this->getAccessToken());
++    $future->addHeader('Authorization', $token_header);
++
++    list($body) = $future->resolvex();
+ 
+     try {
+-      $data = phutil_json_decode($body);
+-      return $data['result'];
++      return phutil_json_decode($body);
+     } catch (PhutilJSONParserException $ex) {
+       throw new Exception(
+         pht(
